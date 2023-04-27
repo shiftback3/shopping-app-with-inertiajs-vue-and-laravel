@@ -64,6 +64,8 @@
 import { ref } from "vue";
 import { useCartStore } from "@/store/cart";
 import { Link } from "@inertiajs/vue3";
+import { toast } from "vue3-toastify";
+import "vue3-toastify/dist/index.css";
 
 const products = [
   {
@@ -124,5 +126,8 @@ const cartStore = useCartStore();
 // Add item to cart
 const addToCart = (product) => {
   cartStore.addToCart(product);
+  toast.success("Cart updated Successfully!", {
+    autoClose: 1000,
+  }); // ToastOptions
 };
 </script>

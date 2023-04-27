@@ -192,25 +192,16 @@ const products = cartStore.items;
 // Add item to cart
 const addToCart = (product) => {
   cartStore.addToCart(product);
-  toast.success("Cart updated Successfully!", {
-    autoClose: 1000,
-  }); // ToastOptions
 };
 
 // Function to remove a particular product (plus quantity)
 function removeItem(item) {
   cartStore.removeFromCart(item);
-  toast.success("Cart updated Successfully!", {
-    autoClose: 1000,
-  }); // ToastOptions
 }
 
 // Function to remove an item (only quantity)
 function removeSingle(item) {
   cartStore.removeSingleFromCart(item);
-  toast.success("Cart updated Successfully!", {
-    autoClose: 1000,
-  }); // ToastOptions
 }
 </script>
 

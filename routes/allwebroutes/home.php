@@ -8,7 +8,7 @@ use Inertia\Inertia;
 
 
 /** This is where all the Public routes are written **/
-
+Route::group(['middleware' => ['guest']], function () {
 Route::get('/', function () {
 return Inertia::render('Public/Index', [
 
@@ -17,13 +17,15 @@ return Inertia::render('Public/Index', [
 
 Route::get('/product-details', function () {
     return Inertia::render('Public/ProductDetails', [
-    'name' => 'Ogbu Garuba',
+// Data goes here......
     ]);
     })->name('product.details');
 
 
     Route::get('/shopping-cart', function () {
         return Inertia::render('Public/Cart', [
-        'name' => 'Ogbu Garuba',
+       // Data goes here......
+
         ]);
         })->name('shopping.cart');
+});
