@@ -1,6 +1,6 @@
 <?php
 
-
+use App\Http\Controllers\HomeController;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
@@ -9,17 +9,9 @@ use Inertia\Inertia;
 
 /** This is where all the Public routes are written **/
 Route::group(['middleware' => ['guest']], function () {
-Route::get('/', function () {
-return Inertia::render('Public/Index', [
+    Route::get('/', [HomeController::class, 'index'])->name('home');
 
-]);
-})->name('home');
-
-Route::get('/product-details', function () {
-    return Inertia::render('Public/ProductDetails', [
-// Data goes here......
-    ]);
-    })->name('product.details');
+    Route::get('/product-details/{id}', [HomeController::class, 'show'])->name('product.details');
 
 
     Route::get('/shopping-cart', function () {

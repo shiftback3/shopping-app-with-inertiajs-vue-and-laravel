@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\ProductRequest;
+use App\Models\Category;
 use App\Models\Media;
 use App\Models\Product;
 use App\Traits\UploadAble;
@@ -17,28 +18,31 @@ class ProductController extends Controller
     use UploadAble;
     public function index()
     {
-
-        $products = Product::get();
+        $categories = Category::get();
+        $products = Product::with(['images'])->get();
         return Inertia::render('Private/ProductList', [
-            'products' => $products
+            'categories' => $categories,
+            'products' => $products,
         ]);
     }
 
     public function show($id = null)
     {
+        $categories = Category::get();
         $products = [];
         if ($id) {
-            $products = Product::where('id', $id)->get();
+            $products = Product::where('id', $id)->with(['images'])->get();
         }
 
         return Inertia::render('Private/AddProduct', [
-            'products' => $products
+            'categories' => $categories,
+            'products' => $products,
         ]);
     }
 
     public function store(ProductRequest $request)
     {
-        try {
+        // return $request->file('images');
             $data = $request->validated();
             $data['slug'] = Str::slug($data['title']);
             $data['created_by'] = auth()->user()->id;
@@ -49,29 +53,78 @@ class ProductController extends Controller
                     $filename = $this->uploadOne($image, 'product');
                     Media::create([
                         'filename' => $filename,
-                        'product_id' => $product->id
+                    'filetype' => 'image',
+                    'product_id' => $product->id,
                     ]);
                 }
             }
             return to_route('product.add')->with('notification', [
                 'color' => 'green',
                 'title' => 'success',
-                'message' => 'category added successfully!',
+            'message' => 'product added successfully!',
             ]);
-        } catch (\Exception $e) {
-            return to_route('product.add')->with('notification', [
+    }
+
+    public function update(ProductRequest $request, $id)
+    {
+
+        $product = Product::findOrFail($id);
+
+        $data = $request->validated();
+        $data['slug'] = Str::slug($data['title']);
+        $product->update($data);
+
+        if ($request->hasFile('images')) {
+            // Clean up
+            $images = Media::where('product_id', $id)->get(['id', 'filename']);
+
+            foreach ($images as $image) {
+                $filename = $this->deleteOne($image['filename']);
+            }
+            $images = $images->pluck('id');
+            Media::destroy($images->toArray());
+
+            foreach ($request->file('images') as $image) {
+                $filename = $this->uploadOne($image, 'product');
+                Media::create([
+                    'filename' => $filename,
+                    'product_id' => $product->id,
+                    'filetype' => 'image',
+                ]);
+            }
+        }
+
+        return to_route('product.add')->with('notification', [
+            'color' => 'green',
+            'title' => 'success',
+            'message' => 'product updated successfully!',
+        ]);
+
+    }
+
+    public function destroy($id)
+    {
+        $product = Product::findOrFail($id);
+        // Clean up
+        $images = Media::where('product_id', $id)->get(['id', 'filename']);
+
+        foreach ($images as $image) {
+            $filename = $this->deleteOne($image['filename']);
+        }
+        $images = $images->pluck('id');
+        Media::destroy($images->toArray());
+        if ($product->delete()) {
+            return to_route('product.index')->with('notification', [
+                'color' => 'green',
+                'title' => 'success',
+                'message' => 'product deleted successfully!',
+            ]);
+        } else {
+            return to_route('product.index')->with('notification', [
                 'color' => 'red',
                 'title' => 'error',
-                'message' => $e,
+                'message' => 'aomething went wrong!',
             ]);
         }
-    }
-
-    public function update()
-    {
-    }
-
-    public function destroy()
-    {
     }
 }

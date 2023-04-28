@@ -2,12 +2,12 @@
 import MainNavbar from "../../Components/MainNavbar.vue";
 import ProductDetails from "../../Components/ProductDetails.vue";
 
-defineProps({ name: String });
+defineProps({ product: Object });
 </script>
 
 <template>
   <MainNavbar />
   <main>
-    <ProductDetails />
+    <ProductDetails :product="product" />
   </main>
 </template>

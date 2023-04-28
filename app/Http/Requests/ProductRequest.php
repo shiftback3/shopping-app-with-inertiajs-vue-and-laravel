@@ -28,7 +28,7 @@ class ProductRequest extends FormRequest
                 'slug'              => 'sometimes|required',
                 'quantity'          => 'required|integer',
                 'category_id'          => 'required|integer',
-                'price'             => 'sometimes|required|numeric', //add double
+            'price'             => 'required|numeric', //add double
                 'discount'         => 'sometimes|required|numeric', //add double
             ];
 

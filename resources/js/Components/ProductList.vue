@@ -7,7 +7,7 @@
         class="grid grid-cols-1 gap-x-6 gap-y-10 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 xl:gap-x-8"
       >
         <div
-          v-for="product in products"
+          v-for="product in data"
           :key="product.id"
           class="group bg-white shadow-md hover:scale-105 hover:shadow-xl duration-500"
         >
@@ -15,7 +15,7 @@
             role="button"
             class="aspect-h-1 aspect-w-1 w-full overflow-hidden rounded-lg xl:aspect-h-8 xl:aspect-w-7"
           >
-            <Link :href="route('product.details')">
+            <Link :href="route('product.details', product.id)">
               <img
                 :src="product.imageSrc"
                 :alt="product.imageAlt"
@@ -23,7 +23,7 @@
               />
             </Link>
           </div>
-          <Link :href="route('product.details')">
+          <Link :href="route('product.details', product.id)">
             <h3 class="mt-4 text-lg font-semibold text-gray-800 my-3 ml-4">
               {{ product.name }}
             </h3>
@@ -61,65 +61,38 @@
 </template>
 
 <script setup>
-import { ref } from "vue";
+import { ref, toRefs } from "vue";
 import { useCartStore } from "@/store/cart";
 import { Link } from "@inertiajs/vue3";
 import { toast } from "vue3-toastify";
 import "vue3-toastify/dist/index.css";
 
-const products = [
-  {
-    id: 1,
-    name: "Basic Tee 6-Pack ",
-    price: 192,
+const props = defineProps({
+  products: Object,
+});
+
+// Use products props
+const { products } = toRefs(props);
+
+/* Using array Map function to covert the data to 
+match what I have on the frontend design and it also allows me to define 
+some default data that is not in the DB */
+
+const data = products.value.map((item) => {
+  const result = {
+    id: item.id,
+    name: item.title,
+    price: item.price,
     rating: 3.9,
     reviewCount: 117,
     href: "#",
-    imageSrc:
-      "https://tailwindui.com/img/ecommerce-images/product-quick-preview-02-detail.jpg",
-    imageAlt: "Two each of gray, white, and black shirts arranged on table.",
-    colors: [
-      { name: "White", class: "bg-white", selectedClass: "ring-gray-400" },
-      { name: "Gray", class: "bg-gray-200", selectedClass: "ring-gray-400" },
-      { name: "Black", class: "bg-gray-900", selectedClass: "ring-gray-900" },
-    ],
-    sizes: [
-      { name: "XXS", inStock: true },
-      { name: "XS", inStock: true },
-      { name: "S", inStock: true },
-      { name: "M", inStock: true },
-      { name: "L", inStock: true },
-      { name: "XL", inStock: true },
-      { name: "XXL", inStock: true },
-      { name: "XXXL", inStock: false },
-    ],
-  },
-
-  {
-    id: 2,
-    name: "Nomad Tumbler",
-    href: "#",
-    price: 35,
-    imageSrc:
-      "https://tailwindui.com/img/ecommerce-images/category-page-04-image-card-02.jpg",
-    imageAlt: "Olive drab green insulated bottle with flared screw lid and flat top.",
-    colors: [
-      { name: "White", class: "bg-white", selectedClass: "ring-gray-400" },
-      { name: "Gray", class: "bg-gray-200", selectedClass: "ring-gray-400" },
-      { name: "Black", class: "bg-gray-900", selectedClass: "ring-gray-900" },
-    ],
-    sizes: [
-      { name: "XXS", inStock: true },
-      { name: "XS", inStock: true },
-      { name: "S", inStock: true },
-      { name: "M", inStock: true },
-      { name: "L", inStock: true },
-      { name: "XL", inStock: true },
-      { name: "XXL", inStock: true },
-      { name: "XXXL", inStock: false },
-    ],
-  },
-];
+    imageSrc: item.images[0]
+      ? `/storage/${item.images[0]?.filename}`
+      : "https://mtek3d.com/wp-content/uploads/2018/01/image-placeholder-500x500.jpg",
+    imageAlt: item.slug,
+  };
+  return result;
+});
 
 // Define the cart store
 const cartStore = useCartStore();

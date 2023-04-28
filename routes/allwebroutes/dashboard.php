@@ -21,11 +21,11 @@ Route::group(['middleware' => ['auth']], function () {
     Route::put('/dashboard/category/{id}', [CategoryController::class, 'update'])->name('category.update');
     Route::delete('/dashboard/category/{id}', [CategoryController::class, 'destroy'])->name('category.destroy');
 
-    // Category Route
+    // Product Route
     Route::get('/dashboard/product', [ProductController::class, 'index'])->name('product.index');
     Route::get('/dashboard/product/add', [ProductController::class, 'show'])->name('product.add');
     Route::get('/dashboard/product/edit/{id?}', [ProductController::class, 'show'])->name('product.edit');
     Route::post('/dashboard/product', [ProductController::class, 'store'])->name('product.store');
-    Route::put('/dashboard/product/{id}', [ProductController::class, 'update'])->name('product.update');
+    Route::post('/dashboard/product/{id}', [ProductController::class, 'update'])->name('product.update');
     Route::delete('/dashboard/product/{id}', [ProductController::class, 'destroy'])->name('product.destroy');
 });

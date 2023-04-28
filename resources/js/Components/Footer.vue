@@ -179,6 +179,10 @@
           </a>
         </div>
         <div class="my-5">
+          Created by
+          <a class="text-red-600" href="https://ogbugarubasunday.surge.sh"
+            >Ogbu Garuba Sunday</a
+          >
           © Copyright {{ new Date().getFullYear() }}. All Rights Reserved.
         </div>
       </div>

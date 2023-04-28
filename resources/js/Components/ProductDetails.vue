@@ -1,18 +1,22 @@
 <template>
   <div>
     <!-- component -->
-    <section class="text-gray-700 body-font overflow-hidden bg-white">
+    <section
+      v-for="(product, index) in data"
+      :key="index"
+      class="text-gray-700 body-font overflow-hidden bg-white"
+    >
       <div class="container px-5 py-24 mx-auto">
         <div class="lg:w-4/5 mx-auto flex flex-wrap">
           <img
-            alt="ecommerce"
             class="lg:w-1/2 w-full object-cover object-center rounded border border-gray-200"
-            src="https://www.whitmorerarebooks.com/pictures/medium/2465.jpg"
+            :src="product.imageSrc"
+            :alt="product.imageAlt"
           />
           <div class="lg:w-1/2 w-full lg:pl-10 lg:py-6 mt-6 lg:mt-0">
-            <h2 class="text-sm title-font text-gray-500 tracking-widest">BRAND NAME</h2>
+            <h2 class="text-sm title-font text-gray-500 tracking-widest">PRODUCT NAME</h2>
             <h1 class="text-gray-900 text-3xl title-font font-medium mb-1">
-              The Catcher in the Rye
+              {{ product.name }}
             </h1>
             <div class="flex mb-4">
               <span class="flex items-center">
@@ -22,7 +26,7 @@
                   stroke-linecap="round"
                   stroke-linejoin="round"
                   stroke-width="2"
-                  class="w-4 h-4 text-red-500"
+                  class="w-4 h-4 text-yellow-500"
                   viewBox="0 0 24 24"
                 >
                   <path
@@ -35,7 +39,7 @@
                   stroke-linecap="round"
                   stroke-linejoin="round"
                   stroke-width="2"
-                  class="w-4 h-4 text-red-500"
+                  class="w-4 h-4 text-yellow-500"
                   viewBox="0 0 24 24"
                 >
                   <path
@@ -48,7 +52,7 @@
                   stroke-linecap="round"
                   stroke-linejoin="round"
                   stroke-width="2"
-                  class="w-4 h-4 text-red-500"
+                  class="w-4 h-4 text-yellow-500"
                   viewBox="0 0 24 24"
                 >
                   <path
@@ -61,7 +65,7 @@
                   stroke-linecap="round"
                   stroke-linejoin="round"
                   stroke-width="2"
-                  class="w-4 h-4 text-red-500"
+                  class="w-4 h-4 text-yellow-500"
                   viewBox="0 0 24 24"
                 >
                   <path
@@ -74,7 +78,7 @@
                   stroke-linecap="round"
                   stroke-linejoin="round"
                   stroke-width="2"
-                  class="w-4 h-4 text-red-500"
+                  class="w-4 h-4 text-yellow-500"
                   viewBox="0 0 24 24"
                 >
                   <path
@@ -129,11 +133,7 @@
               </span>
             </div>
             <p class="leading-relaxed">
-              Fam locavore kickstarter distillery. Mixtape chillwave tumeric sriracha
-              taximy chia microdosing tilde DIY. XOXO fam indxgo juiceramps cornhole raw
-              denim forage brooklyn. Everyday carry +1 seitan poutine tumeric. Gastropub
-              blue bottle austin listicle pour-over, neutra jean shorts keytar banjo
-              tattooed umami cardigan.
+              {{ product.description }}
             </p>
             <div class="flex mt-6 items-center pb-5 border-b-2 border-gray-200 mb-5">
               <div class="flex">
@@ -178,11 +178,14 @@
               </div>
             </div>
             <div class="flex">
-              <span class="title-font font-medium text-2xl text-gray-900">$58.00</span>
-              <button
-                class="flex ml-auto text-white bg-red-500 border-0 py-2 px-6 focus:outline-none hover:bg-red-600 rounded"
+              <span class="title-font font-medium text-2xl text-gray-900"
+                >$ {{ product.price }}</span
               >
-                Button
+              <button
+                @click="addToCart(product)"
+                class="flex ml-auto text-white bg-blue-500 border-0 py-2 px-6 focus:outline-none hover:bg-blue-600 rounded"
+              >
+                Buy
               </button>
               <button
                 class="rounded-full w-10 h-10 bg-gray-200 p-0 border-0 inline-flex items-center justify-center text-gray-500 ml-4"
@@ -207,3 +210,49 @@
     </section>
   </div>
 </template>
+<script setup>
+import { ref, toRefs } from "vue";
+import { useCartStore } from "@/store/cart";
+import { Link } from "@inertiajs/vue3";
+import { toast } from "vue3-toastify";
+import "vue3-toastify/dist/index.css";
+
+const props = defineProps({
+  product: Object,
+});
+
+// Use products props
+const { product } = toRefs(props);
+console.log(product.value);
+
+/* Using array Map function to covert the data to 
+match what I have on the frontend design and it also allows me to define 
+some default data that is not in the DB */
+
+const data = product.value.map((item) => {
+  const result = {
+    id: item.id,
+    name: item.title,
+    description: item.description,
+    price: item.price,
+    rating: 3.9,
+    reviewCount: 117,
+    href: "#",
+    imageSrc: item.images[0]
+      ? `/storage/${item.images[0]?.filename}`
+      : "https://mtek3d.com/wp-content/uploads/2018/01/image-placeholder-500x500.jpg",
+    imageAlt: item.slug,
+  };
+  return result;
+});
+
+// Define the cart store
+const cartStore = useCartStore();
+// Add item to cart
+const addToCart = (product) => {
+  cartStore.addToCart(product);
+  toast.success("Cart updated Successfully!", {
+    autoClose: 1000,
+  }); // ToastOptions
+};
+</script>

@@ -87,7 +87,7 @@
               <tbody
                 class="bg-white divide-y divide-gray-200 dark:divide-gray-300 dark:bg-white-800"
               >
-                <tr v-for="(category, index) in categories" :key="index">
+                <tr v-for="(product, index) in products" :key="index">
                   <td
                     class="px-4 py-4 text-sm font-medium text-gray-700 dark:text-gray-200 whitespace-nowrap"
                   >
@@ -98,31 +98,50 @@
                     </div>
                   </td>
                   <td
-                    class="px-4 py-4 text-sm text-gray-500 dark:text-gray-400 whitespace-nowrap"
+                    class="px-4 py-4 text-sm text-gray-500 dark:text-gray-300 whitespace-nowrap"
                   >
-                    {{ category.title }}
+                    <div class="flex items-center gap-x-2">
+                      <img
+                        class="object-cover w-8 h-8 rounded-full"
+                        :src="
+                          product.images[0]
+                            ? `/storage/${product.images[0].filename}`
+                            : 'https://mtek3d.com/wp-content/uploads/2018/01/image-placeholder-500x500.jpg'
+                        "
+                        alt=""
+                      />
+
+                      <div>
+                        <h2 class="text-sm font-medium text-gray-500">
+                          {{ product.title }}
+                        </h2>
+                        <!-- <p class="text-xs font-normal text-gray-600 dark:text-gray-400">
+                          
+                        </p> -->
+                      </div>
+                    </div>
                   </td>
 
                   <td
                     class="px-4 py-4 text-sm text-gray-500 dark:text-gray-400 whitespace-nowrap"
                   >
-                    {{ category.description }}
+                    {{ product.description }}
                   </td>
                   <td
                     class="px-4 py-4 text-sm text-gray-500 dark:text-gray-400 whitespace-nowrap"
                   >
-                    {{ moment(category.created_at).format("LL") }}
+                    {{ moment(product.created_at).format("LL") }}
                   </td>
                   <td class="px-4 py-4 text-sm whitespace-nowrap">
                     <div class="flex items-center gap-x-6">
-                      <Link :href="route('category.edit', category.id)">
+                      <Link :href="route('product.edit', product.id)">
                         <PencilSquareIcon
                           role="button"
                           class="w-5 text-blue-400 cursor-pointer"
                         />
                       </Link>
                       <TrashIcon
-                        @click="confirmDelete(category)"
+                        @click="confirmDelete(product)"
                         class="w-5 text-red-400 cursor-pointer"
                       />
                     </div>
