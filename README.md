@@ -16,7 +16,7 @@ To set up this project on you local you will have to do the following:
 
 **2.** Run `cd shopping-app-with-inertiajs-vue-and-laravel` to get access to the project files.
 
-**3.** Run `compser install` when every dependecies are loaded you need to create a file `.env` file and copy the content of `.env.example`. 
+**3.** Run `composer install` when every dependecies are loaded you need to create a file `.env` file and copy the content of `.env.example`. 
 
 **4.** Run the follow comands in this order 
 ```
